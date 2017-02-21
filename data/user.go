@@ -8,6 +8,8 @@ type User struct {
 	CreatedAt string `json:"created_at"`
 }
 
+type Users []User
+
 type Repo struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
@@ -43,4 +45,22 @@ func (repos Repos) Less(i, j int) bool {
 
 func (repos Repos) Swap(i, j int) {
 	repos[i], repos[j] = repos[j], repos[i]
+}
+
+func (u *User) Print() {
+	fmt.Println("==================================================")
+	fmt.Println("User: ", u.Username)
+	fmt.Println("ID: ", u.ID)
+}
+
+func (u Users) Len() int {
+	return len(u)
+}
+
+func (u Users) Less(i, j int) bool {
+	return u[i].Username < u[j].Username
+}
+
+func (u Users) Swap(i, j int) {
+	u[i], u[j] = u[j], u[i]
 }

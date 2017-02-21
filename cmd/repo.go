@@ -15,6 +15,12 @@ var repoCmd = &cobra.Command{
 	RunE:  fetchRepos,
 }
 
+var contributorsCmd = &cobra.Command{
+	Use:   "contrib [repo]",
+	Short: "List the contributors for the repo",
+	RunE:  fetchContributors,
+}
+
 func fetchRepos(cmd *cobra.Command, args []string) error {
 	fmt.Println("Getting repositories data for: " + args[0])
 	var repos data.Repos
@@ -26,8 +32,24 @@ func fetchRepos(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
+func fetchContributors(cmd *cobra.Command, args []string) error {
+	if len(args) < 1 {
+		fmt.Println("Need to provide name of the repository")
+		return nil
+	}
+	fmt.Println("Fetching list of contributors for repo: ", args[0])
+	repo := data.Repo{Name: args[0]}
+	var users data.Users
+	GHService.GetContributors(&repo, &users)
+	for i := 0; i < len(users); i++ {
+		users[i].Print()
+	}
+	return nil
+}
+
 func init() {
 	RootCmd.AddCommand(repoCmd)
+	repoCmd.AddCommand(contributorsCmd)
 
 	// Here you will define your flags and configuration settings.
 
