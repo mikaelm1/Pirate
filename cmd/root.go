@@ -4,15 +4,17 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/mikaelm1/pirate/service"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
 	// VERSION is set during build
-	VERSION string
-	cfgFile string
-	Verbose bool
+	VERSION   string
+	GHService service.GitHubService
+	cfgFile   string
+	Verbose   bool
 )
 
 // RootCmd represents the base command when called without any subcommands

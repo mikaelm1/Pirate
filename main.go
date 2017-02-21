@@ -1,6 +1,11 @@
 package main
 
-import "github.com/mikaelm1/pirate/cmd"
+import (
+	"fmt"
+
+	"github.com/mikaelm1/pirate/cmd"
+	"github.com/spf13/viper"
+)
 
 var (
 	// VERSION is set during build
@@ -8,5 +13,12 @@ var (
 )
 
 func main() {
+	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig()
+	if err != nil {
+		fmt.Println("Error reading config file")
+	}
+
 	cmd.Execute(VERSION)
 }
