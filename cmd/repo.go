@@ -11,7 +11,7 @@ import (
 // repoCmd represents the repo command
 var repoCmd = &cobra.Command{
 	Use:   "repo [name]",
-	Short: "List repositories for given user",
+	Short: "List repositories for user",
 	RunE:  fetchRepos,
 }
 
@@ -22,7 +22,7 @@ var contributorsCmd = &cobra.Command{
 }
 
 func fetchRepos(cmd *cobra.Command, args []string) error {
-	fmt.Println("Getting repositories data for: " + args[0])
+	fmt.Println("Getting repositories data...")
 	var repos data.Repos
 	GHService.GetRepo(&repos)
 	sort.Sort(repos)
