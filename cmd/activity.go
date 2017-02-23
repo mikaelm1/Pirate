@@ -24,6 +24,7 @@ import (
 
 var (
 	reposWatched string
+	watchingRepo string
 )
 
 // activityCmd represents the activity command
@@ -42,6 +43,8 @@ to quickly create a Cobra application.`,
 func performActivity(cmd *cobra.Command, args []string) {
 	if reposWatched != "" {
 		fetchWatched()
+	} else if watchingRepo != "" {
+		isWatchingRepo()
 	} else {
 		fmt.Println("Choose a flag to fetch info about one of your activites")
 	}
@@ -62,10 +65,28 @@ func fetchWatched() {
 	}
 }
 
+func isWatchingRepo() {
+	var sub data.Subscription
+	err := GHService.IsWatchingRepo(watchingRepo, &sub)
+	if err != nil {
+		fmt.Println("There was an error:")
+		fmt.Println(err)
+		return
+	}
+	if sub.Subscribed {
+		fmt.Println("You are watching", watchingRepo)
+		fmt.Println("You subscribed to it on", sub.CreatedAt)
+	} else {
+		fmt.Println("You are not currently watching", watchingRepo)
+		fmt.Println("To subscribe to it enter: pirate activity -s", watchingRepo)
+	}
+}
+
 func init() {
 	RootCmd.AddCommand(activityCmd)
 
 	activityCmd.Flags().StringVarP(&reposWatched, "watched", "w", "", "Fetches the repos you are currently watching")
 	activityCmd.Flags().Lookup("watched").NoOptDefVal = "true"
+	activityCmd.Flags().StringVarP(&watchingRepo, "get", "g", "", "Checks to see if you are currently watching the repo")
 
 }
