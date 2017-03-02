@@ -1,9 +1,24 @@
 package service
 
-import "github.com/spf13/viper"
+import (
+	"net/http"
+	"time"
+
+	"github.com/spf13/viper"
+)
 
 type GitHubService struct {
 	// Client *http.Client
+}
+
+type DOService struct {
+	client *http.Client
+}
+
+func (d *DOService) Client() {
+	d.client = &http.Client{
+		Timeout: time.Second * 30,
+	}
 }
 
 type accessToken struct {

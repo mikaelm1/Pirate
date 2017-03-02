@@ -2,9 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"sort"
 
-	"github.com/mikaelm1/pirate/data"
 	"github.com/spf13/cobra"
 )
 
@@ -23,12 +21,12 @@ var contributorsCmd = &cobra.Command{
 
 func fetchRepos(cmd *cobra.Command, args []string) error {
 	fmt.Println("Getting repositories data...")
-	var repos data.Repos
-	GHService.GetRepo(&repos)
-	sort.Sort(repos)
-	for i := 0; i < len(repos); i++ {
-		repos[i].Print()
-	}
+	// var repos data.Repos
+	// GHService.GetRepo(&repos)
+	// sort.Sort(repos)
+	// for i := 0; i < len(repos); i++ {
+	// 	repos[i].Print()
+	// }
 	return nil
 }
 
@@ -38,12 +36,12 @@ func fetchContributors(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 	fmt.Println("Fetching list of contributors for repo: ", args[0])
-	repo := data.Repo{Name: args[0]}
-	var users data.Users
-	GHService.GetContributors(&repo, &users)
-	for i := 0; i < len(users); i++ {
-		users[i].Print()
-	}
+	// repo := data.Repo{Name: args[0]}
+	// var users data.Users
+	// GHService.GetContributors(&repo, &users)
+	// for i := 0; i < len(users); i++ {
+	// 	users[i].Print()
+	// }
 	return nil
 }
 

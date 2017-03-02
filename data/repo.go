@@ -26,7 +26,7 @@ func (repo *Repo) Print() {
 	fmt.Printf("Private: %v\n", repo.Private)
 	fmt.Printf("Created At: %v\n", repo.CrearedAt)
 	fmt.Printf("Description: %v\n", repo.Description)
-	fmt.Printf("Owner: %v\n", repo.Owner.Username)
+	// fmt.Printf("Owner: %v\n", repo.Owner.Username)
 }
 
 func (repos Repos) Len() int {
