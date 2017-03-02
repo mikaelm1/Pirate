@@ -2,31 +2,24 @@ package data
 
 import "fmt"
 
-// User model
 type User struct {
-	ID        int    `json:"id"`
-	Username  string `json:"login"`
-	CreatedAt string `json:"created_at"`
+	DropletLimit    int    `json:"droplet_limit"`
+	Email           string `json:"email"`
+	UUID            string `json:"uuid"`
+	FloatingIPLimit int    `json:"floating_ip_limit"`
+	EmailVerified   bool   `json:"email_verified"`
+	Status          string `json:"status"`
 }
 
-// Users is an array of User structs
-type Users []User
-
-// Print displays info about user
-func (u *User) Print() {
-	fmt.Println("==================================================")
-	fmt.Println("User: ", u.Username)
-	fmt.Println("ID: ", u.ID)
+type Account struct {
+	UserInfo User `json:"account"`
 }
 
-func (u Users) Len() int {
-	return len(u)
-}
-
-func (u Users) Less(i, j int) bool {
-	return u[i].Username < u[j].Username
-}
-
-func (u Users) Swap(i, j int) {
-	u[i], u[j] = u[j], u[i]
+// PrintInfo displays an account's info
+func (a *Account) PrintInfo() {
+	fmt.Println("\n      **Your Account Info**")
+	fmt.Println("Email:          ", a.UserInfo.Email)
+	fmt.Println("Droplet Limit:  ", a.UserInfo.DropletLimit)
+	fmt.Println("Email Verified: ", a.UserInfo.EmailVerified)
+	fmt.Println()
 }

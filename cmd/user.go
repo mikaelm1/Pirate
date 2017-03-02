@@ -20,13 +20,17 @@ import "fmt"
 // userCmd represents the user command
 var userCmd = &cobra.Command{
 	Use:   "user",
-	Short: "Get account info",
+	Short: "Gets your account info",
 	RunE:  fetchData,
 }
 
 func fetchData(cmd *cobra.Command, args []string) error {
 	fmt.Println("Fetching your account info...")
-	DOService.GetUserInfo()
+	err := DOService.GetUserInfo()
+	if err != nil {
+		fmt.Println("There was an error fetching your info: ", err)
+		return err
+	}
 	return nil
 }
 

@@ -5,28 +5,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/mikaelm1/pirate/data"
 )
-
-type User struct {
-	DropletLimit int    `json:"droplet_limit"`
-	Email        string `json:"email"`
-}
-
-type Account struct {
-	UserInfo User `json:"account"`
-}
-
-func (a *Account) PrintInfo() {
-	fmt.Println(a.UserInfo.Email)
-}
 
 // GetUserInfo gets info about the user
 func (c *DOService) GetUserInfo() error {
 	token := getUserToken()
 	bearer := fmt.Sprintf("bearer %v", token)
 	c.Client()
-	//c.client.Get("https://api.digitalocean.com/v2/account")
-
 	req, err := http.NewRequest("GET", "https://api.digitalocean.com/v2/account", nil)
 	if err != nil {
 		return err
@@ -36,9 +23,7 @@ func (c *DOService) GetUserInfo() error {
 	if err != nil {
 		return err
 	}
-	// fmt.Println("Got response")
-	// fmt.Println(res)
-	var account Account
+	var account data.Account
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		panic(err.Error())
@@ -46,7 +31,7 @@ func (c *DOService) GetUserInfo() error {
 	res.Body.Read(body)
 	err = json.Unmarshal(body, &account)
 	if err != nil {
-		fmt.Println("Error: ", err)
+		// fmt.Println("Error: ", err)
 		return err
 	}
 	account.PrintInfo()
