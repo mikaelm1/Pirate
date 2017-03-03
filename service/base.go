@@ -26,7 +26,7 @@ func (c *DOService) MakeGETRequest(url string) (*http.Response, error) {
 	token := getUserToken()
 	bearer := fmt.Sprintf("bearer %v", token)
 	c.Client()
-	req, err := http.NewRequest("GET", "https://api.digitalocean.com/v2/account", nil)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
