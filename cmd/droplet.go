@@ -1,21 +1,9 @@
-// Copyright © 2017 NAME HERE <EMAIL ADDRESS>
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package cmd
 
 import (
 	"fmt"
+
+	"errors"
 
 	"github.com/mikaelm1/pirate/data"
 	"github.com/spf13/cobra"
@@ -23,6 +11,7 @@ import (
 
 var (
 	listDropletsFlag bool
+	getSingleDroplet int
 )
 
 // dropletCmd represents the droplet command
@@ -41,13 +30,25 @@ func handleCommand(*cobra.Command, []string) error {
 			fmt.Println("Error: ", err)
 			return err
 		}
-		fmt.Println(droplets)
 		for i := 0; i < len(droplets.DropletsList); i++ {
 			droplets.DropletsList[i].PrintInfo()
 		}
+	} else if getSingleDroplet != -1 {
+		return fetchDroplet()
 	} else {
-		fmt.Println("You must pass in one of the flags.")
+		return errors.New("flag missing")
 	}
+	return nil
+}
+
+func fetchDroplet() error {
+	fmt.Println("Fetching droplet with id", getSingleDroplet)
+	var droplet data.SingleDroplet
+	err := DOService.FetchDroplet(&droplet, getSingleDroplet)
+	if err != nil {
+		return err
+	}
+	droplet.SDroplet.PrintInfo()
 	return nil
 }
 
@@ -55,5 +56,6 @@ func init() {
 	RootCmd.AddCommand(dropletCmd)
 
 	dropletCmd.Flags().BoolVarP(&listDropletsFlag, "list", "l", false, "list my droplets")
+	dropletCmd.Flags().IntVarP(&getSingleDroplet, "single", "s", -1, "get droplet by id")
 
 }

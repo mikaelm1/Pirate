@@ -16,12 +16,14 @@ type DOService struct {
 	client *http.Client
 }
 
+// Client initializes the http client
 func (c *DOService) Client() {
 	c.client = &http.Client{
 		Timeout: time.Second * 30,
 	}
 }
 
+// MakeGETRequest is a generic helper function for making GET requests
 func (c *DOService) MakeGETRequest(url string) (*http.Response, error) {
 	token := getUserToken()
 	bearer := fmt.Sprintf("bearer %v", token)

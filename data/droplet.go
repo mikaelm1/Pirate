@@ -22,6 +22,10 @@ type Kernel struct {
 	Version string `json:"version"`
 }
 
+type SingleDroplet struct {
+	SDroplet Droplet `json:"droplet"`
+}
+
 type Droplets struct {
 	DropletsList []Droplet `json:"droplets"`
 	// Links        string    `json:"links"`
