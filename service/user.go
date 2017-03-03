@@ -2,24 +2,14 @@ package service
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"net/http"
 
 	"github.com/mikaelm1/pirate/data"
 )
 
 // GetUserInfo gets info about the user
 func (c *DOService) GetUserInfo() error {
-	token := getUserToken()
-	bearer := fmt.Sprintf("bearer %v", token)
-	c.Client()
-	req, err := http.NewRequest("GET", "https://api.digitalocean.com/v2/account", nil)
-	if err != nil {
-		return err
-	}
-	req.Header.Add("Authorization", bearer)
-	res, err := c.client.Do(req)
+	res, err := c.MakeGETRequest("https://api.digitalocean.com/v2/account")
 	if err != nil {
 		return err
 	}

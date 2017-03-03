@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -15,10 +16,26 @@ type DOService struct {
 	client *http.Client
 }
 
-func (d *DOService) Client() {
-	d.client = &http.Client{
+func (c *DOService) Client() {
+	c.client = &http.Client{
 		Timeout: time.Second * 30,
 	}
+}
+
+func (c *DOService) MakeGETRequest(url string) (*http.Response, error) {
+	token := getUserToken()
+	bearer := fmt.Sprintf("bearer %v", token)
+	c.Client()
+	req, err := http.NewRequest("GET", "https://api.digitalocean.com/v2/account", nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Authorization", bearer)
+	res, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 type accessToken struct {
