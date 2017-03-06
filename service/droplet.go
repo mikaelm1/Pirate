@@ -43,3 +43,29 @@ func (c *DOService) FetchDroplet(droplet *data.SingleDroplet, id int) error {
 	}
 	return nil
 }
+
+// CreateDroplet creates a new droplet
+func (c *DOService) CreateDroplet(droplet *data.SingleDroplet, dropletBody *data.DropletCreate) error {
+	url := fmt.Sprintf("https://api.digitalocean.com/v2/droplets")
+	body, err := json.Marshal(dropletBody)
+	if err != nil {
+		return err
+	}
+	// fmt.Println("Creating droplet with: ", droplet)
+	res, err := c.MakePostRequest(url, body)
+	if err != nil {
+		return err
+	}
+	// fmt.Println(res.Header)
+	body, err = ioutil.ReadAll(res.Body)
+	// fmt.Println(os.Stdout, string(body))
+	if err != nil {
+		return err
+	}
+	res.Body.Read(body)
+	err = json.Unmarshal(body, &droplet)
+	if err != nil {
+		return err
+	}
+	return nil
+}
