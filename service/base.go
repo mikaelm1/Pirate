@@ -42,12 +42,30 @@ func (c *DOService) MakeGETRequest(url string) (*http.Response, error) {
 	return res, nil
 }
 
-// MakePostRequest is a generic helper function for making POSST requests
+// MakePostRequest is a generic helper function for making POST requests
 func (c *DOService) MakePostRequest(url string, body []byte) (*http.Response, error) {
 	token := getUserToken()
 	bearer := fmt.Sprintf("Bearer %v", token)
 	c.Client()
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Authorization", bearer)
+	req.Header.Add("Content-Type", "application/json")
+	res, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+// SendDeleteRequest is a generic helper function for making DELETE requests
+func (c *DOService) SendDeleteRequest(url string) (*http.Response, error) {
+	token := getUserToken()
+	bearer := fmt.Sprintf("Bearer %v", token)
+	c.Client()
+	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return nil, err
 	}

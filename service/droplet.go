@@ -6,6 +6,8 @@ import (
 
 	"fmt"
 
+	"errors"
+
 	"github.com/mikaelm1/pirate/data"
 )
 
@@ -66,6 +68,19 @@ func (c *DOService) CreateDroplet(droplet *data.SingleDroplet, dropletBody *data
 	err = json.Unmarshal(body, &droplet)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+// DeleteDroplet will send a DELETE request to DO to delete a droplet
+func (c *DOService) DeleteDroplet(id string) error {
+	url := fmt.Sprintf("https://api.digitalocean.com/v2/droplets/%v", id)
+	res, err := c.SendDeleteRequest(url)
+	if err != nil {
+		return err
+	}
+	if res.StatusCode != 204 {
+		return errors.New("There was an error deleting the droplet. Make sure the droplet ID is correct")
 	}
 	return nil
 }
