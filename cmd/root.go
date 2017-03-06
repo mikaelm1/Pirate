@@ -12,7 +12,6 @@ import (
 var (
 	// VERSION is set during build
 	VERSION   string
-	GHService service.GitHubService
 	DOService service.DOService
 	cfgFile   string
 	Verbose   bool
@@ -68,6 +67,6 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		//fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }

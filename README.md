@@ -1,2 +1,2 @@
 # Pirate
-A CLI for either the GitHub API or the Digital Ocean API. [WIP]
+A CLI for the Digital Ocean API. [WIP]
