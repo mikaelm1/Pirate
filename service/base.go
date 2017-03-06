@@ -10,10 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-type GitHubService struct {
-	// Client *http.Client
-}
-
+// DOService is the http client
 type DOService struct {
 	client *http.Client
 }
