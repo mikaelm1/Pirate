@@ -19,6 +19,8 @@ var (
 	imageName      string
 	backupsEnabled bool
 	sshKey         []string
+	// delete droplet
+	dropletID string
 )
 
 // dropletCmd represents the droplet command
@@ -32,6 +34,12 @@ var dropletCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create droplet",
 	RunE:  handleCreate,
+}
+
+var dropletDeleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a droplet",
+	RunE:  handleDelete,
 }
 
 func isImageNameValid(name string) bool {
@@ -99,6 +107,18 @@ func handleCreate(*cobra.Command, []string) error {
 	return nil
 }
 
+func handleDelete(*cobra.Command, []string) error {
+	if dropletID == "" {
+		return errors.New("Need the id of the droplet")
+	}
+	err := DOService.DeleteDroplet(dropletID)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Your droplet has been successfully deleted")
+	return nil
+}
+
 func handleCommand(*cobra.Command, []string) error {
 	if listDropletsFlag {
 		fmt.Println("Fetching your droplets...")
@@ -133,6 +153,7 @@ func fetchDroplet() error {
 func init() {
 	RootCmd.AddCommand(dropletCmd)
 	dropletCmd.AddCommand(dropletCreateCmd)
+	dropletCmd.AddCommand(dropletDeleteCmd)
 
 	dropletCmd.Flags().BoolVarP(&listDropletsFlag, "list", "l", false, "list my droplets")
 	dropletCmd.Flags().IntVarP(&getSingleDroplet, "single", "s", -1, "get droplet by id")
@@ -143,4 +164,6 @@ func init() {
 	dropletCreateCmd.Flags().StringVarP(&imageName, "image", "i", "debian-8-x64", "distribution image type")
 	dropletCreateCmd.Flags().StringArrayVarP(&sshKey, "key", "k", []string{}, "ID's of your ssh keys")
 	dropletCreateCmd.Flags().BoolVarP(&backupsEnabled, "backups", "b", false, "enable backups")
+	// delete droplet flags
+	dropletDeleteCmd.Flags().StringVarP(&dropletID, "droplet-id", "i", "", "droplet id")
 }
