@@ -12,7 +12,6 @@ import (
 var (
 	// VERSION is set during build
 	VERSION   string
-	GHService service.GitHubService
 	DOService service.DOService
 	cfgFile   string
 	Verbose   bool
