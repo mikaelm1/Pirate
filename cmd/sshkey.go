@@ -77,7 +77,11 @@ func getSingleKey() error {
 	if err != nil {
 		return err
 	}
-	key.SSHKey.PrintInfo()
+	if outputType == "json" {
+		key.SSHKey.JSONPrint()
+	} else {
+		key.SSHKey.PrintInfo()
+	}
 	return nil
 }
 

@@ -1,7 +1,9 @@
 package data
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 )
 
 // SSHKey model
@@ -35,4 +37,13 @@ func (k *SSHKey) PrintInfo() {
 	fmt.Println("ID:           ", k.ID)
 	fmt.Println("Fingerprint:  ", k.Fingerprint)
 	fmt.Println("Name:         ", k.Name)
+}
+
+// JSONPrint displays info in JSON format
+func (k *SSHKey) JSONPrint() {
+	output, err := json.MarshalIndent(k, "", "    ")
+	if err != nil {
+		fmt.Println("Error parsing to JSON")
+	}
+	os.Stdout.Write(output)
 }

@@ -11,10 +11,11 @@ import (
 
 var (
 	// VERSION is set during build
-	VERSION   string
-	DOService service.DOService
-	cfgFile   string
-	Verbose   bool
+	VERSION    string
+	DOService  service.DOService
+	cfgFile    string
+	Verbose    bool
+	outputType string
 )
 
 // RootCmd represents the base command when called without any subcommands
@@ -49,6 +50,7 @@ func init() {
 	// will be global for your application.
 	RootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pirate.yaml)")
+	RootCmd.PersistentFlags().StringVar(&outputType, "output", "json", "The type of output to diplay")
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
@@ -59,7 +61,6 @@ func initConfig() {
 	if cfgFile != "" { // enable ability to specify config file via flag
 		viper.SetConfigFile(cfgFile)
 	}
-
 	// viper.SetConfigName(".pirate") // name of config file (without extension)
 	// viper.AddConfigPath("$HOME")   // adding home directory as first search path
 	viper.AutomaticEnv() // read in environment variables that match
