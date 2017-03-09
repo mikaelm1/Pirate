@@ -24,7 +24,10 @@ import (
 )
 
 var (
-	listSSHKeys bool
+	listSSHKeys      bool
+	showSingleKey    bool
+	sshKeyID         int
+	sshKeyFingerpint string
 )
 
 // sshkeyCmd represents the sshkey command
@@ -37,6 +40,8 @@ var sshkeyCmd = &cobra.Command{
 func handleSSHCommand(*cobra.Command, []string) error {
 	if listSSHKeys {
 		return getAllSSHKeys()
+	} else if showSingleKey {
+		return getSingleKey()
 	}
 	return errors.New("Need to provide a flag")
 }
@@ -56,9 +61,31 @@ func getAllSSHKeys() error {
 	return nil
 }
 
+func getSingleKey() error {
+	_id := ""
+	if sshKeyID != 0 {
+		fmt.Println("Fetching key with ID:", sshKeyID)
+		_id = fmt.Sprintf("%d", sshKeyID)
+	} else if sshKeyFingerpint != "" {
+		_id = sshKeyFingerpint
+		fmt.Println("Fetching key with Fingerpint:", sshKeyFingerpint)
+	} else {
+		return errors.New("Need to provide either an ID or Fingerpint")
+	}
+	var key data.SingleSSHKey
+	_, err := DOService.FetchSingleKey(_id, &key)
+	if err != nil {
+		return err
+	}
+	key.SSHKey.PrintInfo()
+	return nil
+}
+
 func init() {
 	RootCmd.AddCommand(sshkeyCmd)
 
 	sshkeyCmd.Flags().BoolVarP(&listSSHKeys, "list", "l", false, "get all of your keys")
-
+	sshkeyCmd.Flags().BoolVarP(&showSingleKey, "single", "s", false, "Get key with either Id or Fingerpint")
+	sshkeyCmd.Flags().IntVar(&sshKeyID, "id", 0, "The ID of your ssh key")
+	sshkeyCmd.Flags().StringVarP(&sshKeyFingerpint, "fingerprint", "f", "", "The Fingerprint of your ssh key")
 }
