@@ -11,22 +11,22 @@ import (
 
 var (
 	// VERSION is set during build
-	VERSION   string
-	DOService service.DOService
-	cfgFile   string
-	Verbose   bool
+	VERSION    string
+	DOService  service.DOService
+	cfgFile    string
+	Verbose    bool
+	outputType string
 )
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:   "pirate",
-	Short: "Pirate is a cli for accessing GitHub's API",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "\nPirate is a cli for accessing Digital Ocean's API\n",
+	Long: `Pirate is a cli for managing your servers on Digital Ocean. 
+Use it to create or delete servers. Provision your servers to prepare them 
+for dockerized apps. Manage load balancers, adding or removing servers as needed. 
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Complete documentation is available at https://github.com/mikaelm1/Pirate.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {},
@@ -50,6 +50,7 @@ func init() {
 	// will be global for your application.
 	RootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pirate.yaml)")
+	RootCmd.PersistentFlags().StringVar(&outputType, "output", "text", "The type of output to diplay")
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
@@ -60,7 +61,6 @@ func initConfig() {
 	if cfgFile != "" { // enable ability to specify config file via flag
 		viper.SetConfigFile(cfgFile)
 	}
-
 	// viper.SetConfigName(".pirate") // name of config file (without extension)
 	// viper.AddConfigPath("$HOME")   // adding home directory as first search path
 	viper.AutomaticEnv() // read in environment variables that match
