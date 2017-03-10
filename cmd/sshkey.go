@@ -106,11 +106,7 @@ func createNewSSHKey(*cobra.Command, []string) error {
 		return err
 	}
 	fmt.Println("New SSH key created")
-	if outputType == "json" {
-		singleKey.SSHKey.JSONPrint()
-	} else {
-		singleKey.SSHKey.PrintInfo()
-	}
+	singleKey.SSHKey.PrintInfo()
 	return nil
 }
 
@@ -154,11 +150,7 @@ func getSingleKey() error {
 	if err != nil {
 		return err
 	}
-	if outputType == "json" {
-		key.SSHKey.JSONPrint()
-	} else {
-		key.SSHKey.PrintInfo()
-	}
+	key.SSHKey.PrintInfo()
 	return nil
 }
 

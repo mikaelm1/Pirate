@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+
+	"github.com/spf13/viper"
 )
 
 // SSHKey model
@@ -33,6 +35,15 @@ func (arr *ArraySSHKey) PrintInfo() {
 
 // PrintInfo displays info about a single key
 func (k *SSHKey) PrintInfo() {
+	if viper.GetString("output") == "json" {
+		k.JSONPrint()
+	} else {
+		k.TextPrint()
+	}
+}
+
+// TextPrint displays info in text format
+func (k *SSHKey) TextPrint() {
 	fmt.Println("==============================")
 	fmt.Println("ID:           ", k.ID)
 	fmt.Println("Fingerprint:  ", k.Fingerprint)
