@@ -33,6 +33,8 @@ var (
 	publicKeyPath    string
 	publicKeyString  string
 	keyName          string
+	deleteKeyFinger  string
+	deleteKeyID      string
 )
 
 // sshkeyCmd represents the sshkey command
@@ -46,6 +48,31 @@ var sshKeyCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new ssh key",
 	RunE:  createNewSSHKey,
+}
+
+var sshKeyDeleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete an ssh key",
+	RunE:  deleteSSHKey,
+}
+
+func deleteSSHKey(*cobra.Command, []string) error {
+	if deleteKeyFinger == "" && deleteKeyID == "" {
+		return errors.New("Must provide either the ID or Fingerpint of ssh key to delete")
+	}
+	var _id string
+	if deleteKeyFinger != "" {
+		_id = deleteKeyFinger
+	} else {
+		_id = deleteKeyID
+	}
+	fmt.Println("Deleting your ssh key...")
+	_, err := DOService.DeleteSSHKey(_id)
+	if err != nil {
+		return err
+	}
+	fmt.Println("SSH key successfully deleted")
+	return nil
 }
 
 func createNewSSHKey(*cobra.Command, []string) error {
@@ -80,9 +107,9 @@ func createNewSSHKey(*cobra.Command, []string) error {
 	}
 	fmt.Println("New SSH key created")
 	if outputType == "json" {
-		key.JSONPrint()
+		singleKey.SSHKey.JSONPrint()
 	} else {
-		key.PrintInfo()
+		singleKey.SSHKey.PrintInfo()
 	}
 	return nil
 }
@@ -138,6 +165,7 @@ func getSingleKey() error {
 func init() {
 	RootCmd.AddCommand(sshkeyCmd)
 	sshkeyCmd.AddCommand(sshKeyCreateCmd)
+	sshkeyCmd.AddCommand(sshKeyDeleteCmd)
 
 	sshkeyCmd.Flags().BoolVarP(&listSSHKeys, "list", "l", false, "get all of your keys")
 	sshkeyCmd.Flags().BoolVarP(&showSingleKey, "single", "s", false, "Get key with either Id or Fingerpint")
@@ -147,4 +175,7 @@ func init() {
 	sshKeyCreateCmd.Flags().StringVarP(&publicKeyPath, "keypath", "k", "", "The absolute path to your public ssh key")
 	sshKeyCreateCmd.Flags().StringVarP(&publicKeyString, "public-key", "p", "", "Your public ssh key")
 	sshKeyCreateCmd.Flags().StringVarP(&keyName, "key-name", "n", "", "The name of the new ssh key")
+	// delete key Flags
+	sshKeyDeleteCmd.Flags().StringVarP(&deleteKeyID, "key-id", "i", "", "The ID of your ssh key")
+	sshKeyDeleteCmd.Flags().StringVarP(&deleteKeyFinger, "fingerprint", "f", "", "The fingerprint of your ssh key")
 }
