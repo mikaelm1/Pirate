@@ -50,7 +50,7 @@ func init() {
 	// will be global for your application.
 	RootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pirate.yaml)")
-	RootCmd.PersistentFlags().StringVar(&outputType, "output", "json", "The type of output to diplay")
+	RootCmd.PersistentFlags().StringVar(&outputType, "output", "text", "The type of output to diplay")
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")

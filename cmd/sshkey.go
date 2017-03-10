@@ -19,6 +19,8 @@ import (
 
 	"errors"
 
+	"io/ioutil"
+
 	"github.com/mikaelm1/pirate/data"
 	"github.com/spf13/cobra"
 )
@@ -28,6 +30,9 @@ var (
 	showSingleKey    bool
 	sshKeyID         int
 	sshKeyFingerpint string
+	publicKeyPath    string
+	publicKeyString  string
+	keyName          string
 )
 
 // sshkeyCmd represents the sshkey command
@@ -37,13 +42,58 @@ var sshkeyCmd = &cobra.Command{
 	RunE:  handleSSHCommand,
 }
 
+var sshKeyCreateCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create a new ssh key",
+	RunE:  createNewSSHKey,
+}
+
+func createNewSSHKey(*cobra.Command, []string) error {
+	fmt.Println("Creating new SSH key...")
+	if keyName == "" {
+		return errors.New("New key must have a name")
+	}
+	if publicKeyPath == "" && publicKeyString == "" {
+		return errors.New("Must provide either a path to your public key or the key itself")
+	}
+	var _key string
+	if publicKeyPath != "" {
+		dat, err := ioutil.ReadFile(publicKeyPath)
+		if err != nil {
+			return err
+		}
+		// fmt.Println(string(dat))
+		_key = string(dat)
+		// fmt.Println("Creating new key using public key:", string(dat))
+	} else if publicKeyString != "" {
+		_key = publicKeyString
+		// fmt.Println("Creating new key using public key: ", publicKeyString)
+	}
+	key := data.SSHKey{
+		Name:      keyName,
+		PublicKey: _key,
+	}
+	var singleKey data.SingleSSHKey
+	_, err := DOService.CreateSSHKey(&key, &singleKey)
+	if err != nil {
+		return err
+	}
+	fmt.Println("New SSH key created")
+	if outputType == "json" {
+		key.JSONPrint()
+	} else {
+		key.PrintInfo()
+	}
+	return nil
+}
+
 func handleSSHCommand(*cobra.Command, []string) error {
 	if listSSHKeys {
 		return getAllSSHKeys()
 	} else if showSingleKey {
 		return getSingleKey()
 	}
-	return errors.New("Need to provide a flag")
+	return errors.New("Must to provide a flag")
 }
 
 func getAllSSHKeys() error {
@@ -87,9 +137,14 @@ func getSingleKey() error {
 
 func init() {
 	RootCmd.AddCommand(sshkeyCmd)
+	sshkeyCmd.AddCommand(sshKeyCreateCmd)
 
 	sshkeyCmd.Flags().BoolVarP(&listSSHKeys, "list", "l", false, "get all of your keys")
 	sshkeyCmd.Flags().BoolVarP(&showSingleKey, "single", "s", false, "Get key with either Id or Fingerpint")
 	sshkeyCmd.Flags().IntVar(&sshKeyID, "id", 0, "The ID of your ssh key")
 	sshkeyCmd.Flags().StringVarP(&sshKeyFingerpint, "fingerprint", "f", "", "The Fingerprint of your ssh key")
+	// create key Flags
+	sshKeyCreateCmd.Flags().StringVarP(&publicKeyPath, "keypath", "k", "", "The absolute path to your public ssh key")
+	sshKeyCreateCmd.Flags().StringVarP(&publicKeyString, "public-key", "p", "", "Your public ssh key")
+	sshKeyCreateCmd.Flags().StringVarP(&keyName, "key-name", "n", "", "The name of the new ssh key")
 }
