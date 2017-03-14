@@ -1,9 +1,14 @@
 package data
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
+
+	"github.com/spf13/viper"
 )
 
+// Droplet is the model for a droplet
 type Droplet struct {
 	ID        int      `json:"id"`
 	Name      string   `json:"name"`
@@ -14,7 +19,8 @@ type Droplet struct {
 	DKernel   Kernel   `json:"kernel"`
 	CreatedAt string   `json:"created_at"`
 	DNetwork  Network  `json:"networks"`
-	SSHKey    []string `json:"ss_keys"`
+	Image     Image    `json:"image"`
+	Features  []string `json:"features"`
 }
 
 // DropletCreate to be used when creating a new droplet
@@ -29,25 +35,45 @@ type DropletCreate struct {
 	Backups           bool     `json:"backups"`
 }
 
+// Image is the base model for an image
+type Image struct {
+	ID          int      `json:"id"`
+	Name        string   `json:"name"`
+	Distro      string   `json:"distribution"`
+	Slug        string   `json:"slug"`
+	Public      bool     `json:"public"`
+	Regions     []string `json:"regions"`
+	CreatedAt   string   `json:"created_at"`
+	Type        string   `json:"snapshot"`
+	MinDiskSize int      `json:"min_disk_size"`
+	ImageSize   float64  `json:"size_gigabytes"`
+}
+
+// Kernel is base model
 type Kernel struct {
 	ID      int    `json:"id"`
 	Name    string `json:"name"`
 	Version string `json:"version"`
 }
 
+// SingleDroplet is model for a single droplet
 type SingleDroplet struct {
 	SDroplet Droplet `json:"droplet"`
 }
 
+// Droplets is model for array of droplets
 type Droplets struct {
 	DropletsList []Droplet `json:"droplets"`
 	// Links        string    `json:"links"`
 }
 
+// Network is base model for network
 type Network struct {
 	V4Networks `json:"v4"`
+	V6Networks `json:"v6"`
 }
 
+// V4Network is base model for ip4 network
 type V4Network struct {
 	IPAddress string `json:"ip_address"`
 	Netmask   string `json:"netmask"`
@@ -55,15 +81,48 @@ type V4Network struct {
 	Type      string `json:"type"`
 }
 
+// V4Networks is array of ip4 networks
 type V4Networks []V4Network
+
+// V6Network is the base model ip6 network
+type V6Network struct {
+	IPAddress string `json:"ip_address"`
+	Netmask   int    `json:"netmask"`
+	Gateway   string `json:"gateway"`
+	Type      string `json:"type"`
+}
+
+// V6Networks is model for an array of ip6 networks
+type V6Networks []V6Network
 
 // PrintInfo displays info about the droplet
 func (d *Droplet) PrintInfo() {
+	if viper.GetString("output") == "json" {
+		d.JSONPrint()
+	} else {
+		d.TextPrint()
+	}
+}
+
+// JSONPrint displays droplet info as JSON
+func (d *Droplet) JSONPrint() {
+	output, err := json.MarshalIndent(d, "", "    ")
+	if err != nil {
+		fmt.Println("Error parsing to JSON")
+	}
+	os.Stdout.Write(output)
+}
+
+// TextPrint displays droplet info as text
+func (d *Droplet) TextPrint() {
 	fmt.Println("======================================")
 	fmt.Println("Name:            ", d.Name)
 	fmt.Println("ID:              ", d.ID)
 	fmt.Println("Created:         ", d.CreatedAt)
-	fmt.Println("Kernel:          ", d.DKernel.Name)
+	fmt.Println("Image Distro:    ", d.Image.Distro)
+	if len(d.DNetwork.V4Networks) > 0 {
+		fmt.Println("IP4:             ", d.DNetwork.V4Networks[0].IPAddress)
+	}
 	// fmt.Println("V4 IP:   ", d.DNetwork.V4Networks[0].IPAddress)
 }
 
