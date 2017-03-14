@@ -5,23 +5,87 @@ import (
 	"fmt"
 	"os"
 
+	"errors"
+
 	"github.com/spf13/viper"
 )
 
 // LoadBalancer is the base model
 type LoadBalancer struct {
-	ID              string `json:"id"`
-	Name            string `json:"name"`
-	IP              string `json:"ip"`
-	Algorithm       string `json:"algorithm"`
-	Status          string `json:"new"`
-	CreatedAt       string `json:"created_at"`
-	RedirectToHTTPS bool   `json:"redirect_to_https"`
+	ID              string           `json:"id"`
+	Name            string           `json:"name"`
+	IP              string           `json:"ip"`
+	Algorithm       string           `json:"algorithm"`
+	Status          string           `json:"new"`
+	CreatedAt       string           `json:"created_at"`
+	RedirectToHTTPS bool             `json:"redirect_to_https"`
+	DropletIDs      int              `json:"droplet_ids"`
+	Rules           []ForwardingRule `json:"forwarding_rules"`
+	HealthCheck     HealthCheck      `json:"health_check"`
+	StickySessions  StickySessions   `json:"sticky_sessions"`
 }
 
 // LoadBalancers is model for an array of LoadBalancer objects
 type LoadBalancers struct {
 	Balancers []LoadBalancer `json:"load_balancers"`
+}
+
+// ForwardingRule model
+type ForwardingRule struct {
+	EntryProtocol  string `json:"entry_protocol"` // http, https, or tcp. Traffic to balancer
+	EntryPort      int    `json:"entry_port"`
+	TargetProtocol string `json:"target_protocol"` // http, https, or tcp. Traffic from balancer to server
+	TargetPort     int    `json:"target_port"`
+	CertificateID  string `json:"certificate_id"`
+	TLSPassthrough bool   `json:"tls_passthrough"`
+}
+
+// ForwardingRules array of ForwardingRule
+type ForwardingRules struct {
+	Rules []ForwardingRule `json:"forwarding_rules"`
+}
+
+// HealthCheck model
+type HealthCheck struct {
+	Protocol               string `json:"protocol"` // http or tcp
+	Port                   int    `json:"port"`
+	Path                   string `json:"path"`
+	CheckIntervalSeconds   int    `json:"check_interval_seconds"`
+	ResponseTimeoutSeconds int    `json:"response_timeout_seconds"`
+	HealthyThreshold       int    `json:"healthy_threshold"`
+	UnhealthyThreshold     int    `json:"unhealthy_threshold"`
+}
+
+// StickySessions model
+type StickySessions struct {
+	Type             string `json:"type"` // cookies or none(default)
+	CookieName       string `json:"cookie_name"`
+	CookieTLSSeconds string `json:"cookie_tls_seconds"`
+}
+
+// IsValid validates ForwardingRule fields
+func (r *ForwardingRule) IsValid() error {
+	if r.EntryProtocol != "http" || r.EntryProtocol != "https" || r.EntryProtocol != "tcp" {
+		return errors.New("A forwarding rule's entry protocol must be either http, https, or tcp")
+	}
+	if r.TargetProtocol != "http" || r.TargetProtocol != "https" || r.TargetProtocol != "tcp" {
+		return errors.New("A forwarding rule's entry port must be either http, https, or tcp")
+	}
+	return nil
+}
+
+// IsValid validates StickySessions fields
+func (s *StickySessions) IsValid() error {
+	if s.Type == "" || s.Type == "none" {
+		return nil
+	}
+	if s.CookieName == "" {
+		return errors.New("Cookie name must be set if using cookies for sticky sessions")
+	}
+	if s.CookieTLSSeconds == "" {
+		return errors.New("Seconds till cookie expires must be set when using cookies for sticky sessions")
+	}
+	return nil
 }
 
 // PrintInfo displays array of load balancers
