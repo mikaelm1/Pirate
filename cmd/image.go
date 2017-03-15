@@ -25,7 +25,14 @@ func handleImageCommand(*cobra.Command, []string) error {
 	if listAllImages {
 		_, err := DOService.FetchAllImages(&images)
 		if err != nil {
-			return nil
+			return err
+		}
+		fmt.Printf("Showing %d images:\n", len(images.Images))
+		images.PrintInfo()
+	} else if listDistroImages {
+		_, err := DOService.FetchAllDistroImages(&images)
+		if err != nil {
+			return err
 		}
 		fmt.Printf("Showing %d images:\n", len(images.Images))
 		images.PrintInfo()
