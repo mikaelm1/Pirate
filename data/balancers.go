@@ -14,6 +14,7 @@ import (
 type LoadBalancer struct {
 	ID              string          `json:"id"`
 	StringRegion    string          `json:"regions"`
+	Region          Region          `json:"region"`
 	Name            string          `json:"name"`
 	IP              string          `json:"ip"`
 	Algorithm       string          `json:"algorithm"`
@@ -29,6 +30,10 @@ type LoadBalancer struct {
 // LoadBalancers is model for an array of LoadBalancer objects
 type LoadBalancers struct {
 	Balancers []LoadBalancer `json:"load_balancers"`
+}
+
+// TODO: Here temporarily
+type Region struct {
 }
 
 // ForwardingRule model
@@ -99,7 +104,6 @@ func (b *LoadBalancers) PrintInfo() {
 
 // PrintInfo displays info about a load balancer
 func (b *LoadBalancer) PrintInfo() {
-	fmt.Println("Printing")
 	if viper.GetString("output") == "json" {
 		b.JSONPrint()
 	} else {

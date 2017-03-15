@@ -44,11 +44,12 @@ func (c *DOService) CreateLoadBalancer(balancer *data.LoadBalancer) (*http.Respo
 		return nil, err
 	}
 	res.Body.Read(body)
-	// fmt.Println(string(body))
 	if res.StatusCode == 422 {
+		fmt.Println(string(body))
 		return res, fmt.Errorf("Status Code 422: Make sure all protocols are on the same network layer")
 	}
 	if res.StatusCode >= 300 {
+		fmt.Println(string(body))
 		return res, fmt.Errorf("Status Code %d: There was an error creating the load balancer", res.StatusCode)
 	}
 	balancers := data.LoadBalancers{
@@ -59,6 +60,24 @@ func (c *DOService) CreateLoadBalancer(balancer *data.LoadBalancer) (*http.Respo
 		return res, err
 	}
 	return res, nil
+}
+
+// BalancerAddDroplets sends a request to add array of droplets to a single load balancer
+func (c *DOService) BalancerAddDroplets(balancerID string, ids []int) (*http.Response, error) {
+	droplets := make(map[string][]int)
+	droplets["droplet_ids"] = ids
+	body, err := json.Marshal(droplets)
+	if err != nil {
+		return nil, err
+	}
+	res, err := c.MakePostRequest(fmt.Sprintf("https://api.digitalocean.com/v2/load_balancers/%s/droplets", balancerID), body)
+	if err != nil {
+		return res, err
+	}
+	if res.StatusCode != 204 {
+		return res, fmt.Errorf("Status Code %d: Error adding droplets to load balancer", res.StatusCode)
+	}
+	return nil, nil
 }
 
 // DeleteLoadBalancer sends a request to delete a single load balancer

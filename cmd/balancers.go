@@ -53,6 +53,28 @@ var balancersDeleteCmd = &cobra.Command{
 	RunE:  deleteLoadBalancer,
 }
 
+var addDropletsCmd = &cobra.Command{
+	Use:   "add-droplets",
+	Short: "Add droplets to a load balancer",
+	RunE:  addDroplets,
+}
+
+func addDroplets(*cobra.Command, []string) error {
+	if balancerID == "" {
+		return fmt.Errorf("Must provide balancer ID")
+	}
+	if len(dropletIDs) == 0 {
+		return fmt.Errorf("Must provide at least one droplet id to add to the load balancer")
+	}
+	fmt.Println("Adding droplets to load balancer...")
+	_, err := DOService.BalancerAddDroplets(balancerID, dropletIDs)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Added %d droplets to your load balancer\n", len(dropletIDs))
+	return nil
+}
+
 func deleteLoadBalancer(*cobra.Command, []string) error {
 	if balancerID == "" {
 		return fmt.Errorf("Must provide valid load balancer ID")
@@ -105,6 +127,7 @@ func createLoadBalancer(*cobra.Command, []string) error {
 		DropletIDs:  dropletIDs,
 	}
 	if len(dropletIDs) == 0 {
+		fmt.Println(balancerRegion)
 		balancer.StringRegion = balancerRegion
 	}
 	sticky := data.StickySessions{
@@ -117,6 +140,7 @@ func createLoadBalancer(*cobra.Command, []string) error {
 		return err
 	}
 	balancer.StickySessions = sticky
+	balancer.PrintInfo()
 	_, err = DOService.CreateLoadBalancer(&balancer)
 	if err != nil {
 		return err
@@ -167,6 +191,7 @@ func init() {
 	RootCmd.AddCommand(balancersCmd)
 	balancersCmd.AddCommand(balancersCreateCmd)
 	balancersCmd.AddCommand(balancersDeleteCmd)
+	balancersCmd.AddCommand(addDropletsCmd)
 
 	// create flags
 	balancersCreateCmd.Flags().StringVarP(&balancerName, "name", "n", "", "Name of new load balancer")
@@ -193,4 +218,8 @@ func init() {
 
 	// delete flags
 	balancersDeleteCmd.Flags().StringVar(&balancerID, "balancer-id", "", "The ID of the load balancer to delete")
+
+	// add droplets flags
+	addDropletsCmd.Flags().StringVar(&balancerID, "balancer-id", "", "The ID of the load balancer to delete")
+	addDropletsCmd.Flags().IntSliceVar(&dropletIDs, "droplet-ids", []int{}, "Array of droplet IDs to be assigned to load balancer")
 }
