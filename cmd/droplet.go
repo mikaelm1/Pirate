@@ -43,7 +43,7 @@ var dropletDeleteCmd = &cobra.Command{
 }
 
 func isImageNameValid(name string) bool {
-	valids := [...]string{"debian-8-x64"}
+	valids := [...]string{"debian-8-x64", "fedora-24-x64", "centos-6-x64", "fedora-25-x64", "ubuntu-16-04-x64"}
 	for _, img := range valids {
 		if img == name {
 			return true
@@ -161,7 +161,7 @@ func init() {
 	dropletCreateCmd.Flags().StringVarP(&dropletName, "name", "n", "", "name new droplet")
 	dropletCreateCmd.Flags().StringVarP(&regionName, "region", "r", "nyc3", "name the region")
 	dropletCreateCmd.Flags().StringVarP(&dropletSize, "size", "s", "512mb", "size of cpu")
-	dropletCreateCmd.Flags().StringVarP(&imageName, "image", "i", "debian-8-x64", "distribution image type")
+	dropletCreateCmd.Flags().StringVarP(&imageName, "image", "i", "ubuntu-16-04-x64", "distribution image type")
 	dropletCreateCmd.Flags().StringArrayVarP(&sshKey, "key", "k", []string{}, "ID's of your ssh keys")
 	dropletCreateCmd.Flags().BoolVarP(&backupsEnabled, "backups", "b", false, "enable backups")
 	// delete droplet flags

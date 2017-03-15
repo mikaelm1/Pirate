@@ -77,8 +77,9 @@ func (c *DOService) CreateSSHKey(key *data.SSHKey, singleKey *data.SingleSSHKey)
 
 // DeleteSSHKey sends request to delete an SSH key
 func (c *DOService) DeleteSSHKey(id string) (*http.Response, error) {
+	body := []byte{}
 	url := fmt.Sprintf("https://api.digitalocean.com/v2/account/keys/%v", id)
-	res, err := c.SendDeleteRequest(url)
+	res, err := c.SendDeleteRequest(url, body)
 	if err != nil {
 		return res, err
 	}

@@ -74,8 +74,9 @@ func (c *DOService) CreateDroplet(droplet *data.SingleDroplet, dropletBody *data
 
 // DeleteDroplet will send a DELETE request to DO to delete a droplet
 func (c *DOService) DeleteDroplet(id string) error {
+	body := []byte{}
 	url := fmt.Sprintf("https://api.digitalocean.com/v2/droplets/%v", id)
-	res, err := c.SendDeleteRequest(url)
+	res, err := c.SendDeleteRequest(url, body)
 	if err != nil {
 		return err
 	}
