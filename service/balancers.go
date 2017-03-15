@@ -30,7 +30,7 @@ func (c *DOService) FetchAllLoadBalancers(balancers *data.LoadBalancers) (*http.
 }
 
 // CreateLoadBalancer sends post request to create a new load balancer
-func (c *DOService) CreateLoadBalancer(balancer *data.LoadBalancer) (*http.Response, error) {
+func (c *DOService) CreateLoadBalancer(balancer *data.LoadBalancerCreate) (*http.Response, error) {
 	body, err := json.Marshal(balancer)
 	if err != nil {
 		return nil, err
@@ -52,8 +52,8 @@ func (c *DOService) CreateLoadBalancer(balancer *data.LoadBalancer) (*http.Respo
 		fmt.Println(string(body))
 		return res, fmt.Errorf("Status Code %d: There was an error creating the load balancer", res.StatusCode)
 	}
-	balancers := data.LoadBalancers{
-		Balancers: []data.LoadBalancer{*balancer},
+	balancers := data.LoadBalancersCreate{
+		Balancers: []data.LoadBalancerCreate{*balancer},
 	}
 	err = json.Unmarshal(body, &balancers)
 	if err != nil {

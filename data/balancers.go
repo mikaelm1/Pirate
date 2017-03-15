@@ -27,13 +27,40 @@ type LoadBalancer struct {
 	StickySessions  StickySessions  `json:"sticky_sessions"`
 }
 
-// LoadBalancers is model for an array of LoadBalancer objects
+// LoadBalancerCreate is the model to use when creating a load balancer
+type LoadBalancerCreate struct {
+	ID              string          `json:"id"`
+	StringRegion    string          `json:"regions"`
+	Name            string          `json:"name"`
+	IP              string          `json:"ip"`
+	Algorithm       string          `json:"algorithm"`
+	Status          string          `json:"new"`
+	CreatedAt       string          `json:"created_at"`
+	RedirectToHTTPS bool            `json:"redirect_to_https"`
+	DropletIDs      []int           `json:"droplet_ids"`
+	Rules           ForwardingRules `json:"forwarding_rules"`
+	HealthCheck     HealthCheck     `json:"health_check"`
+	StickySessions  StickySessions  `json:"sticky_sessions"`
+	Region          string          `json:"region"`
+}
+
+// LoadBalancers is the model for an array of LoadBalancer objects
 type LoadBalancers struct {
 	Balancers []LoadBalancer `json:"load_balancers"`
 }
 
-// TODO: Here temporarily
+// LoadBalancersCreate is the model for an array of LoadBalancerCreate objects
+type LoadBalancersCreate struct {
+	Balancers []LoadBalancerCreate `json:"load_balancers"`
+}
+
+// Region model
 type Region struct {
+	Name      string   `json:"name"`
+	Slug      string   `json:"slug"`
+	Sizes     []string `json:"sizes"`
+	Features  []string `json:"features"`
+	Available bool     `json:"available"`
 }
 
 // ForwardingRule model
@@ -90,6 +117,34 @@ func (s *StickySessions) IsValid() error {
 		return errors.New("Seconds till cookie expires must be set when using cookies for sticky sessions")
 	}
 	return nil
+}
+
+// PrintInfo displays info about a load balancer
+func (b *LoadBalancerCreate) PrintInfo() {
+	if viper.GetString("output") == "json" {
+		b.JSONPrint()
+	} else {
+		b.TextPrint()
+	}
+}
+
+// JSONPrint displays info in JSON format
+func (b *LoadBalancerCreate) JSONPrint() {
+	output, err := json.MarshalIndent(b, "", "    ")
+	if err != nil {
+		fmt.Println("Error parsing to JSON")
+	}
+	os.Stdout.Write(output)
+}
+
+// TextPrint displays info in text format
+func (b *LoadBalancerCreate) TextPrint() {
+	fmt.Println("========Load Balancer==============")
+	fmt.Printf("ID:            %s\n", b.ID)
+	fmt.Printf("NAME           %s\n", b.Name)
+	fmt.Printf("IP:            %s\n", b.IP)
+	fmt.Printf("Algorithm      %s\n", b.Algorithm)
+	fmt.Printf("Status:        %s\n", b.Status)
 }
 
 // PrintInfo displays array of load balancers

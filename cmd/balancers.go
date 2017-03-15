@@ -141,7 +141,7 @@ func createLoadBalancer(*cobra.Command, []string) error {
 		HealthyThreshold:       healthThreshold,
 		UnhealthyThreshold:     unhealthyThreshold,
 	}
-	balancer := data.LoadBalancer{
+	balancer := data.LoadBalancerCreate{
 		Name:        balancerName,
 		Algorithm:   balancerAlgo,
 		Rules:       forwardingRules,
@@ -149,8 +149,7 @@ func createLoadBalancer(*cobra.Command, []string) error {
 		DropletIDs:  dropletIDs,
 	}
 	if len(dropletIDs) == 0 {
-		fmt.Println(balancerRegion)
-		balancer.StringRegion = balancerRegion
+		balancer.Region = balancerRegion
 	}
 	sticky := data.StickySessions{
 		Type:             stickyType,
@@ -162,7 +161,6 @@ func createLoadBalancer(*cobra.Command, []string) error {
 		return err
 	}
 	balancer.StickySessions = sticky
-	balancer.PrintInfo()
 	_, err = DOService.CreateLoadBalancer(&balancer)
 	if err != nil {
 		return err
