@@ -1,7 +1,12 @@
 package cmd
 
-import "github.com/spf13/cobra"
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/mikaelm1/pirate/data"
+
+	"github.com/spf13/cobra"
+)
 
 // userCmd represents the user command
 var userCmd = &cobra.Command{
@@ -12,7 +17,8 @@ var userCmd = &cobra.Command{
 
 func fetchData(cmd *cobra.Command, args []string) error {
 	fmt.Println("Fetching your account info...")
-	err := DOService.GetUserInfo()
+	var account data.Account
+	err := DOService.GetUserInfo(&account)
 	if err != nil {
 		fmt.Println("There was an error fetching your info: ", err)
 		return err
