@@ -43,7 +43,7 @@ var dropletDeleteCmd = &cobra.Command{
 }
 
 func isImageNameValid(name string) bool {
-	valids := [...]string{"debian-8-x64", "fedora-24-x64", "centos-6-x64", "fedora-25-x64", "ubuntu-16-04-x64"}
+	valids := [...]string{"coreos-beta", "fedora-24-x64", "centos-5-x64", "centos-5-x32", "fedora-25-x64", "debian-7-x64", "debian-7-x32", "debian-8-x64", "debian-8-x32", "centos-6-x32", "centos-6-x64", "freebsd-11-0-x64-zfs", "freebsd-10-3-x64-zfs", "ubuntu-12-04-x32", "ubuntu-12-04-x64", "centos-7-x64", "freebsd-11-0-x64", "freebsd-10-3-x64", "ubuntu-16-10-x64", "ubuntu-16-10-x32", "coreos-alpha", "ubuntu-16-04-x32", "ubuntu-16-04-x64", "ubuntu-14-04-x64", "ubuntu-14-04-x32", "coreos-stable"}
 	for _, img := range valids {
 		if img == name {
 			return true

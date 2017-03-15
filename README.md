@@ -3,19 +3,11 @@ A CLI for the Digital Ocean API. [Work In Process]
 
 - [Getting Started](#getting-started)
 - [Droplets](#droplets)
-    - [Get](#get)
-    - [Create](#create)
-    - [Delete](#delete)
+    - **Use** [Get](#get), [Create](#create), [Delete](#delete)
 - [SSH Keys](#ssh-keys)
-    - [Get](#get)
-    - [Create](#create)
-    - [Delete](#delete)
+    - **Use** [Get](#get), [Create](#create), [Delete](#delete)
 - [Load Balancers](#load-balancers)
-    - [Get](#get)
-    - [Create](#create)
-    - [Delete](#delete)
-    - [Add Droplets](#add-droplets)
-    - [Remove Droplets](#remove-droplets)
+    - **Use** [Get](#get), [Create](#create), [Delete](#delete), [Add Droplets](#add-droplets),[Remove Droplets](#remove-droplets)
 
 ## Getting Started 
 
@@ -80,3 +72,10 @@ You can add one or more droplets to a single load balancer. Running `pirate bala
 ### Remove Droplets
 
 You can remove one or more droplets from a single load balancer. Running `pirate balancers remove-droplets --balancer-id=theID --droplet-ids=12345` will remove one droplet with the given ID from the load balancer.
+
+## Images
+
+### Get
+
+1. To list all images: `pirate image -l`
+2. To list all distro images: `pirate image -d`
