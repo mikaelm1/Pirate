@@ -59,6 +59,28 @@ var addDropletsCmd = &cobra.Command{
 	RunE:  addDroplets,
 }
 
+var removeDropletsCmd = &cobra.Command{
+	Use:   "remove-droplets",
+	Short: "Remove droplets from a load balancer",
+	RunE:  removeDroplets,
+}
+
+func removeDroplets(*cobra.Command, []string) error {
+	if balancerID == "" {
+		return fmt.Errorf("Must provide balancer ID")
+	}
+	if len(dropletIDs) == 0 {
+		return fmt.Errorf("Must provide at least one droplet id to add to the load balancer")
+	}
+	fmt.Println("Removing droplets from load balancer...")
+	_, err := DOService.BalancerRemoveDroplets(balancerID, dropletIDs)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Removed %d droplets from your load balancer\n", len(dropletIDs))
+	return nil
+}
+
 func addDroplets(*cobra.Command, []string) error {
 	if balancerID == "" {
 		return fmt.Errorf("Must provide balancer ID")
@@ -192,6 +214,7 @@ func init() {
 	balancersCmd.AddCommand(balancersCreateCmd)
 	balancersCmd.AddCommand(balancersDeleteCmd)
 	balancersCmd.AddCommand(addDropletsCmd)
+	balancersCmd.AddCommand(removeDropletsCmd)
 
 	// create flags
 	balancersCreateCmd.Flags().StringVarP(&balancerName, "name", "n", "", "Name of new load balancer")
@@ -222,4 +245,8 @@ func init() {
 	// add droplets flags
 	addDropletsCmd.Flags().StringVar(&balancerID, "balancer-id", "", "The ID of the load balancer to delete")
 	addDropletsCmd.Flags().IntSliceVar(&dropletIDs, "droplet-ids", []int{}, "Array of droplet IDs to be assigned to load balancer")
+
+	// remove droplets flags
+	removeDropletsCmd.Flags().StringVar(&balancerID, "balancer-id", "", "The ID of the load balancer to delete")
+	removeDropletsCmd.Flags().IntSliceVar(&dropletIDs, "droplet-ids", []int{}, "Array of droplet IDs to be assigned to load balancer")
 }

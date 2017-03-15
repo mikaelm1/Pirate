@@ -77,12 +77,34 @@ func (c *DOService) BalancerAddDroplets(balancerID string, ids []int) (*http.Res
 	if res.StatusCode != 204 {
 		return res, fmt.Errorf("Status Code %d: Error adding droplets to load balancer", res.StatusCode)
 	}
-	return nil, nil
+	return res, nil
+}
+
+// BalancerRemoveDroplets sends a request to remove droplets from a single load balancer
+func (c *DOService) BalancerRemoveDroplets(balancerID string, ids []int) (*http.Response, error) {
+	droplets := make(map[string][]int)
+	droplets["droplet_ids"] = ids
+	body, err := json.Marshal(droplets)
+	if err != nil {
+		return nil, err
+	}
+	res, err := c.SendDeleteRequest(fmt.Sprintf("https://api.digitalocean.com/v2/load_balancers/%s/droplets", balancerID), body)
+	if err != nil {
+		return res, err
+	}
+	if res.StatusCode != 204 {
+		body, _ := ioutil.ReadAll(res.Body)
+		res.Body.Read(body)
+		fmt.Println(string(body))
+		return res, fmt.Errorf("Status Code %d: Error removing droplets from load balancer", res.StatusCode)
+	}
+	return res, nil
 }
 
 // DeleteLoadBalancer sends a request to delete a single load balancer
 func (c *DOService) DeleteLoadBalancer(id string) (*http.Response, error) {
-	res, err := c.SendDeleteRequest(fmt.Sprintf("https://api.digitalocean.com/v2/load_balancers/%s", id))
+	body := []byte{}
+	res, err := c.SendDeleteRequest(fmt.Sprintf("https://api.digitalocean.com/v2/load_balancers/%s", id), body)
 	if err != nil {
 		return res, err
 	}

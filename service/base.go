@@ -58,11 +58,11 @@ func (c *DOService) MakePostRequest(url string, body []byte) (*http.Response, er
 }
 
 // SendDeleteRequest is a generic helper function for making DELETE requests
-func (c *DOService) SendDeleteRequest(url string) (*http.Response, error) {
+func (c *DOService) SendDeleteRequest(url string, body []byte) (*http.Response, error) {
 	token := getUserToken()
 	bearer := fmt.Sprintf("Bearer %v", token)
 	c.Client()
-	req, err := http.NewRequest("DELETE", url, nil)
+	req, err := http.NewRequest("DELETE", url, bytes.NewBuffer(body))
 	if err != nil {
 		return nil, err
 	}
