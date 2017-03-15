@@ -48,25 +48,11 @@ var balancersCreateCmd = &cobra.Command{
 
 func createLoadBalancer(*cobra.Command, []string) error {
 	fmt.Println("Creating new load balancer...")
-	if balancerName == "" {
-		return errors.New("Must provide a name for the load balancer")
-	}
-	if !isAlgoValid() {
-		return errors.New("Load balancer algorithm must be either 'round_robin' or 'least_connnections'")
-	}
-	if !isRegionValid(balancerRegion) {
-		return fmt.Errorf("(%s) is not a valid region", balancerRegion)
-	}
-	if numForwardingRules < 1 {
-		return fmt.Errorf("Must provide at least one forwarding rule")
+	err := validateCreationFlags()
+	if err != nil {
+		return err
 	}
 	fmt.Printf("Adding %d forwarding rules\n", numForwardingRules)
-	// fmt.Println(len(entryProtocols))
-	// fmt.Println(len(entryProtocols))
-	// fmt.Println(numForwardingRules)
-	if len(entryProtocols) != numForwardingRules || len(entryPorts) != numForwardingRules || len(targetProtocols) != numForwardingRules || len(targetPorts) != numForwardingRules || len(tlsPassthrough) != numForwardingRules {
-		return fmt.Errorf("The variable arrays for the forwarding rules must the match the number of rules being created")
-	}
 	var forwardingRules data.ForwardingRules
 	for i := 0; i < numForwardingRules; i++ {
 		rule := data.ForwardingRule{
@@ -99,7 +85,7 @@ func createLoadBalancer(*cobra.Command, []string) error {
 		HealthCheck: health,
 		DropletIDs:  dropletIDs,
 	}
-	if len(dropletIDs) > 0 {
+	if len(dropletIDs) == 0 {
 		balancer.StringRegion = balancerRegion
 	}
 	sticky := data.StickySessions{
@@ -107,7 +93,7 @@ func createLoadBalancer(*cobra.Command, []string) error {
 		CookieName:       stickyCookieName,
 		CookieTLSSeconds: stickyTLS,
 	}
-	err := sticky.IsValid()
+	err = sticky.IsValid()
 	if err != nil {
 		return err
 	}
@@ -118,6 +104,25 @@ func createLoadBalancer(*cobra.Command, []string) error {
 	}
 	balancer.PrintInfo()
 	fmt.Println("New load balancer created. May take a few minutes until it's fully online")
+	return nil
+}
+
+func validateCreationFlags() error {
+	if balancerName == "" {
+		return errors.New("Must provide a name for the load balancer")
+	}
+	if !isAlgoValid() {
+		return errors.New("Load balancer algorithm must be either 'round_robin' or 'least_connnections'")
+	}
+	if !isRegionValid(balancerRegion) {
+		return fmt.Errorf("(%s) is not a valid region", balancerRegion)
+	}
+	if numForwardingRules < 1 {
+		return fmt.Errorf("Must provide at least one forwarding rule")
+	}
+	if len(entryProtocols) != numForwardingRules || len(entryPorts) != numForwardingRules || len(targetProtocols) != numForwardingRules || len(targetPorts) != numForwardingRules || len(tlsPassthrough) != numForwardingRules {
+		return fmt.Errorf("The variable arrays for the forwarding rules must the match the number of rules being created")
+	}
 	return nil
 }
 

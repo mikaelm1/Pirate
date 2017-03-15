@@ -13,7 +13,7 @@ import (
 // LoadBalancer is the base model
 type LoadBalancer struct {
 	ID              string          `json:"id"`
-	StringRegion    string          `json:"region"`
+	StringRegion    string          `json:"regions"`
 	Name            string          `json:"name"`
 	IP              string          `json:"ip"`
 	Algorithm       string          `json:"algorithm"`
@@ -118,5 +118,10 @@ func (b *LoadBalancer) JSONPrint() {
 
 // TextPrint displays info in text format
 func (b *LoadBalancer) TextPrint() {
-	b.JSONPrint()
+	fmt.Println("========Load Balancer==============")
+	fmt.Printf("ID:            %s\n", b.ID)
+	fmt.Printf("NAME           %s\n", b.Name)
+	fmt.Printf("IP:            %s\n", b.IP)
+	fmt.Printf("Algorithm      %s\n", b.Algorithm)
+	fmt.Printf("Status:        %s\n", b.Status)
 }
