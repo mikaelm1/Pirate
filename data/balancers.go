@@ -12,17 +12,18 @@ import (
 
 // LoadBalancer is the base model
 type LoadBalancer struct {
-	ID              string           `json:"id"`
-	Name            string           `json:"name"`
-	IP              string           `json:"ip"`
-	Algorithm       string           `json:"algorithm"`
-	Status          string           `json:"new"`
-	CreatedAt       string           `json:"created_at"`
-	RedirectToHTTPS bool             `json:"redirect_to_https"`
-	DropletIDs      int              `json:"droplet_ids"`
-	Rules           []ForwardingRule `json:"forwarding_rules"`
-	HealthCheck     HealthCheck      `json:"health_check"`
-	StickySessions  StickySessions   `json:"sticky_sessions"`
+	ID              string          `json:"id"`
+	StringRegion    string          `json:"region"`
+	Name            string          `json:"name"`
+	IP              string          `json:"ip"`
+	Algorithm       string          `json:"algorithm"`
+	Status          string          `json:"new"`
+	CreatedAt       string          `json:"created_at"`
+	RedirectToHTTPS bool            `json:"redirect_to_https"`
+	DropletIDs      []int           `json:"droplet_ids"`
+	Rules           ForwardingRules `json:"forwarding_rules"`
+	HealthCheck     HealthCheck     `json:"health_check"`
+	StickySessions  StickySessions  `json:"sticky_sessions"`
 }
 
 // LoadBalancers is model for an array of LoadBalancer objects
@@ -41,9 +42,7 @@ type ForwardingRule struct {
 }
 
 // ForwardingRules array of ForwardingRule
-type ForwardingRules struct {
-	Rules []ForwardingRule `json:"forwarding_rules"`
-}
+type ForwardingRules []ForwardingRule
 
 // HealthCheck model
 type HealthCheck struct {
@@ -65,11 +64,11 @@ type StickySessions struct {
 
 // IsValid validates ForwardingRule fields
 func (r *ForwardingRule) IsValid() error {
-	if r.EntryProtocol != "http" || r.EntryProtocol != "https" || r.EntryProtocol != "tcp" {
-		return errors.New("A forwarding rule's entry protocol must be either http, https, or tcp")
+	if r.EntryProtocol != "http" && r.EntryProtocol != "https" && r.EntryProtocol != "tcp" {
+		return fmt.Errorf("A forwarding rule's entry protocol must be either http, https, or tcp. (%s) is not a valid option", r.EntryProtocol)
 	}
-	if r.TargetProtocol != "http" || r.TargetProtocol != "https" || r.TargetProtocol != "tcp" {
-		return errors.New("A forwarding rule's entry port must be either http, https, or tcp")
+	if r.TargetProtocol != "http" && r.TargetProtocol != "https" && r.TargetProtocol != "tcp" {
+		return fmt.Errorf("A forwarding rule's target protocol must be either http, https, or tcp. (%s) is not a valid protocol", r.TargetProtocol)
 	}
 	return nil
 }
@@ -119,5 +118,5 @@ func (b *LoadBalancer) JSONPrint() {
 
 // TextPrint displays info in text format
 func (b *LoadBalancer) TextPrint() {
-
+	b.JSONPrint()
 }
