@@ -44,6 +44,7 @@ func (c *DOService) CreateLoadBalancer(balancer *data.LoadBalancer) (*http.Respo
 		return nil, err
 	}
 	res.Body.Read(body)
+	// fmt.Println(string(body))
 	if res.StatusCode == 422 {
 		return res, fmt.Errorf("Status Code 422: Make sure all protocols are on the same network layer")
 	}
@@ -56,6 +57,21 @@ func (c *DOService) CreateLoadBalancer(balancer *data.LoadBalancer) (*http.Respo
 	err = json.Unmarshal(body, &balancers)
 	if err != nil {
 		return res, err
+	}
+	return res, nil
+}
+
+// DeleteLoadBalancer sends a request to delete a single load balancer
+func (c *DOService) DeleteLoadBalancer(id string) (*http.Response, error) {
+	res, err := c.SendDeleteRequest(fmt.Sprintf("https://api.digitalocean.com/v2/load_balancers/%s", id))
+	if err != nil {
+		return res, err
+	}
+	if res.StatusCode != 204 {
+		body, _ := ioutil.ReadAll(res.Body)
+		res.Body.Read(body)
+		fmt.Println(string(body))
+		return res, fmt.Errorf("Status Code %d: There was an error deleting load balancer with id: %s", res.StatusCode, id)
 	}
 	return res, nil
 }

@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	balancerID            string
 	balancerName          string
 	balancerAlgo          string
 	balancerRegion        string
@@ -44,6 +45,24 @@ var balancersCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new load balancer",
 	RunE:  createLoadBalancer,
+}
+
+var balancersDeleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete load balancer",
+	RunE:  deleteLoadBalancer,
+}
+
+func deleteLoadBalancer(*cobra.Command, []string) error {
+	if balancerID == "" {
+		return fmt.Errorf("Must provide valid load balancer ID")
+	}
+	_, err := DOService.DeleteLoadBalancer(balancerID)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Deleted load balancer with id:", balancerID)
+	return nil
 }
 
 func createLoadBalancer(*cobra.Command, []string) error {
@@ -147,6 +166,7 @@ func isAlgoValid() bool {
 func init() {
 	RootCmd.AddCommand(balancersCmd)
 	balancersCmd.AddCommand(balancersCreateCmd)
+	balancersCmd.AddCommand(balancersDeleteCmd)
 
 	// create flags
 	balancersCreateCmd.Flags().StringVarP(&balancerName, "name", "n", "", "Name of new load balancer")
@@ -170,4 +190,7 @@ func init() {
 	balancersCreateCmd.Flags().StringVar(&stickyType, "sticky-type", "none", "Should client requests be served by same droplet")
 	balancersCreateCmd.Flags().StringVar(&stickyCookieName, "sticky-name", "", "If using sticky sessions, name to use for cookies")
 	balancersCreateCmd.Flags().StringVar(&stickyTLS, "sticky-tls", "", "If using sticky sessions, number of seconds till cookie expires")
+
+	// delete flags
+	balancersDeleteCmd.Flags().StringVar(&balancerID, "balancer-id", "", "The ID of the load balancer to delete")
 }
