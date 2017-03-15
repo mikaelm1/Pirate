@@ -23,6 +23,7 @@ func fetchData(cmd *cobra.Command, args []string) error {
 		fmt.Println("There was an error fetching your info: ", err)
 		return err
 	}
+	account.PrintInfo()
 	return nil
 }
 

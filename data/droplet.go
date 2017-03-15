@@ -35,20 +35,6 @@ type DropletCreate struct {
 	Backups           bool     `json:"backups"`
 }
 
-// Image is the base model for an image
-type Image struct {
-	ID          int      `json:"id"`
-	Name        string   `json:"name"`
-	Distro      string   `json:"distribution"`
-	Slug        string   `json:"slug"`
-	Public      bool     `json:"public"`
-	Regions     []string `json:"regions"`
-	CreatedAt   string   `json:"created_at"`
-	Type        string   `json:"snapshot"`
-	MinDiskSize int      `json:"min_disk_size"`
-	ImageSize   float64  `json:"size_gigabytes"`
-}
-
 // Kernel is base model
 type Kernel struct {
 	ID      int    `json:"id"`
