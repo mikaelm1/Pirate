@@ -8,6 +8,8 @@ A CLI for the Digital Ocean API. [Work In Progress]
     - **Use** [Get](#get), [Create](#create), [Delete](#delete)
 - [Load Balancers](#load-balancers)
     - **Use** [Get](#get), [Create](#create), [Delete](#delete), [Add Droplets](#add-droplets),[Remove Droplets](#remove-droplets)
+- [Images](#images)
+    - **Use** [Get](#get)
 
 ## Getting Started 
 

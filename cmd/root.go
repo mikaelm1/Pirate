@@ -10,7 +10,6 @@ import (
 )
 
 var (
-	// VERSION is set during build
 	VERSION    string
 	DOService  service.DOService
 	cfgFile    string
@@ -23,12 +22,10 @@ var RootCmd = &cobra.Command{
 	Use:   "pirate",
 	Short: "\nPirate is a cli for accessing Digital Ocean's API\n",
 	Long: `Pirate is a cli for managing your servers on Digital Ocean. 
-Use it to create or delete servers. Provision your servers to prepare them 
-for dockerized apps. Manage load balancers, adding or removing servers as needed. 
+Use it to create and delete droplets, manage ssh keys, and manage your balancers,
+adding and removing droplets to them as needed.
 
 Complete documentation is available at https://github.com/mikaelm1/Pirate.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {},
 }
 
@@ -45,14 +42,9 @@ func Execute(version string) {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports Persistent Flags, which, if defined here,
-	// will be global for your application.
-	RootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
+	//RootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pirate.yaml)")
 	RootCmd.PersistentFlags().StringVar(&outputType, "output", "text", "The type of output to diplay")
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
