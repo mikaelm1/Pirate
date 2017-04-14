@@ -1,5 +1,5 @@
 # Pirate
-A CLI for the Digital Ocean API. [Work In Progress]
+A CLI for the Digital Ocean API. 
 
 - [Getting Started](#getting-started)
 - [Droplets](#droplets)
