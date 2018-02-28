@@ -1,6 +1,8 @@
 # Pirate
 A CLI for the Digital Ocean API. 
 
+**Note** I recommend using [doctl](https://github.com/digitalocean/doctl), DigitalOcean's official CLI.
+
 - [Getting Started](#getting-started)
 - [Droplets](#droplets)
     - **Use** [Get](#get), [Create](#create), [Delete](#delete)
